@@ -6,6 +6,11 @@
 `define Valid 1'b1
 `define Invalid 1'b0
 
+`define RamDisable 1`b0 
+`define RamEnable 1`b1
+`define RamUnWrite 1`b0
+`define RamWrite 1`b1
+
 // ID begin
 // I型指令
 `define Inst_ori 6'b001101
@@ -14,6 +19,10 @@
 `define Inst_addi 6'b001000
 `define Inst_subi 6'b001001
 `define Inst_lui 6'b001111
+
+// lw & sw
+`define Inst_lw 6'b100011
+`define Inst_sw 6'b101011
 
 // R型指令
 `define Inst_r 6'b000000 
@@ -59,6 +68,8 @@
 `define Bgtz 6'b001110
 `define Bltz 6'b001111
 
+`define Lw 6'b010000
+`define Sw 6'b010001
 
 module IF(
     input wire clk,
@@ -111,103 +122,103 @@ module ID (
             regbAddr = 5'h0;
             regcAddr = 5'h0;
             imm = `Zero;
-        end else begin
-            case (inst_op)
-        `Inst_r: begin
-        case(inst_func)
-            `Inst_or: begin
-            op = `Or;
-                regaRead = `Valid;
-                regbRead = `Valid;
-                regcWrite = `Valid;
-                regaAddr = inst[25:21]; 
-                regbAddr = inst[20:16];
-                regcAddr = inst[15:11]; 
-                imm = `Zero;
-            end
-            `Inst_and: begin
-                        op = `And; 
-                        regaRead = `Valid;
-                        regbRead = `Valid;
-                        regcWrite = `Valid;
-                        regaAddr = inst[25:21]; 
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11]; 
-                        imm = `Zero;
-                    end
-                    `Inst_xor: begin
-                        op = `Xor;
-                        regaRead = `Valid;
-                        regbRead = `Valid;
-                        regcWrite = `Valid;
-                        regaAddr = inst[25:21];
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11];
-                        imm = `Zero;
-                    end
-                    `Inst_add: begin
-                        op = `Add;
-                        regaRead = `Valid;
-                        regbRead = `Valid;
-                        regcWrite = `Valid;
-                        regaAddr = inst[25:21];
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11];
-                        imm = `Zero;
-                    end
+        end 
+        else begin
+            case (inst_op) // R型指令
+                `Inst_r: begin
+                    case(inst_func)
+                        `Inst_or: begin
+                            op = `Or;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = inst[25:21]; 
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11]; 
+                            imm = `Zero;
+                        end
+                        `Inst_and: begin
+                            op = `And; 
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = inst[25:21]; 
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11]; 
+                            imm = `Zero;
+                        end
+                        `Inst_xor: begin
+                            op = `Xor;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11];
+                            imm = `Zero;
+                        end
+                        `Inst_add: begin
+                            op = `Add;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11];
+                            imm = `Zero;
+                        end
                     `Inst_sub: begin
-                        op = `Subr;
-                        regaRead = `Valid;
-                        regbRead = `Valid;
-                        regcWrite = `Valid;
-                        regaAddr = inst[25:21];
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11];
-                        imm = `Zero;
-                    end
+                            op = `Subr;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11];
+                            imm = `Zero;
+                        end
                     `Inst_sll: begin
-                        op = `Sll; 
-                regaRead = `Invalid;
-                        regbRead = `Valid; 
-                        regcWrite = `Valid;
-                        regaAddr = 5'h0;
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11];
-                        imm = {27'h0, inst[10:6]};
-                    end
+                            op = `Sll; 
+                            regaRead = `Invalid;
+                            regbRead = `Valid; 
+                            regcWrite = `Valid;
+                            regaAddr = 5'h0;
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11];
+                            imm = {27'h0, inst[10:6]};
+                        end
                     `Inst_srl: begin
-                        op = `Srl;
-                        regaRead = `Invalid;
-                        regbRead = `Valid;
-                        regcWrite = `Valid;
-                        regaAddr = 5'h0;
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11];
-                        imm = {27'h0, inst[10:6]};
-                    end
+                            op = `Srl;
+                            regaRead = `Invalid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = 5'h0;
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11];
+                            imm = {27'h0, inst[10:6]};
+                        end
                     `Inst_sra: begin
-                        op = `Sra;
+                            op = `Sra;
+                            regaRead = `Invalid;
+                            regbRead = `Valid;
+                            regcWrite = `Valid;
+                            regaAddr = 5'h0;
+                            regbAddr = inst[20:16];
+                            regcAddr = inst[15:11];
+                            imm = {27'h0, inst[10:6]};
+                        end
+                    default: begin
+                        op = `Nop;
                         regaRead = `Invalid;
-                        regbRead = `Valid;
-                        regcWrite = `Valid;
+                        regbRead = `Invalid;
+                        regcWrite = `Invalid;
                         regaAddr = 5'h0;
-                        regbAddr = inst[20:16];
-                        regcAddr = inst[15:11];
-                        imm = {27'h0, inst[10:6]};
-                    end
-
-            default: begin
-                    op = `Nop;
-                    regaRead = `Invalid;
-                    regbRead = `Invalid;
-                    regcWrite = `Invalid;
-                    regaAddr = 5'h0;
-                    regbAddr = 5'h0;
-                    regcAddr = 5'h0;
-                    imm = `Zero;    
-            end         
-        endcase
-        end            
+                        regbAddr = 5'h0;
+                        regcAddr = 5'h0;
+                        imm = `Zero;    
+                        end         
+                endcase
+            end            
         `Inst_ori: begin
                     op = `Or;
                     regaRead = `Valid;
@@ -218,7 +229,7 @@ module ID (
                     regcAddr = inst[20:16];
                     imm = {16'h0, inst[15:0]};
                 end
-                `Inst_andi: begin
+        `Inst_andi: begin
                     op = `And;
                     regaRead = `Valid;
                     regbRead = `Invalid;
@@ -228,7 +239,7 @@ module ID (
                     regcAddr = inst[20:16];
                     imm = {16'h0, inst[15:0]};
                 end
-                `Inst_xori: begin
+        `Inst_xori: begin
                     op = `Xor;
                     regaRead = `Valid;
                     regbRead = `Invalid;
@@ -238,7 +249,7 @@ module ID (
                     regcAddr = inst[20:16];
                     imm = {16'h0, inst[15:0]};
                 end
-                `Inst_addi: begin
+        `Inst_addi: begin
                     op = `Add;
                     regaRead = `Valid;
                     regbRead = `Invalid;
@@ -248,7 +259,7 @@ module ID (
                     regcAddr = inst[20:16];
                     imm = {{16{inst[15]}}, inst[15:0]};
                 end
-                `Inst_subi: begin
+        `Inst_subi: begin
                     op = `Sub;
                     regaRead = `Valid;
                     regbRead = `Invalid;
@@ -258,7 +269,7 @@ module ID (
                     regcAddr = inst[20:16];
                     imm = {16'h0, inst[15:0]};
                 end
-                `Inst_lui: begin
+        `Inst_lui: begin
                     op = `Lui;
                     regaRead = `Valid;
                     regbRead = `Invalid;
@@ -268,7 +279,27 @@ module ID (
                     regcAddr = inst[20:16];
                     imm = {inst[15:0], 16'h0}; 
                 end
-                default: begin
+        `Inst_lw: begin
+                    op = `Lw;
+                    regaRead = `Valid;
+                    regbRead  = `Invalid;
+                    regcWrite = `Valid;
+                    regaAddr = inst[25:21];
+                    regbAddr = `Zero;
+                    regcAddr = inst[20:16];
+                    imm = {{16{inst[15]}},inst[15:0]};
+                end
+        `Inst_sw: begin
+                    op = `Sw;
+                    regaRead = `Valid;
+                    regbRead = `Valid;
+                    regcWrite = `Invalid;
+                    regaAddr = inst[25:21];
+                    regbAddr = inst[20:16];
+                    regcAddr = `Zero;
+                    imm = {{16{inst[15]}},inst[15:0]};
+                end 
+        default: begin
                     op = `Nop;
                     regaRead = `Invalid;
                     regbRead = `Invalid;
@@ -285,6 +316,8 @@ module ID (
     always @(*) begin
         if (rst == `RstEnable)
             regaData = `Zero;
+        else if(op == `Lw || op == `Sw)               
+            regaData = regaData_i + imm;      
         else if (regaRead == `Valid)
             regaData = regaData_i;
         else
@@ -303,7 +336,7 @@ endmodule
 
 module EX (
     input wire rst,
-    input wire [5:0] op,
+    input wire [5:0] op_i,
     input wire [31:0] regaData,
     input wire [31:0] regbData,
     input wire regcWrite_i,
@@ -311,13 +344,21 @@ module EX (
     output reg [31:0] regcData,
     output reg regcWrite,
     output reg [4:0] regcAddr
+    // lw&sw指令添加
+    output reg [5:0] op,
+    output wire [31:0] memAddr,
+    output wire [31:0] memData
+
 );
+    assign op = op_i;
+    assign memAddr = regaData;
+    assign memData = regbData;
 
     always @(*) begin
         if (rst == `RstEnable)
             regcData = `Zero;
         else begin
-            case (op)
+            case (op_i)
                 `Or:
                     regcData = regaData | regbData;
                 `And:
@@ -340,13 +381,87 @@ module EX (
                 regcData = $signed(regbData) >>> regaData; 
 
     default:
-                    regcData = `Zero;
+                regcData = `Zero;
             endcase
         end
 
         regcWrite = regcWrite_i;
         regcAddr = regcAddr_i;
     end
+endmodule
+
+// MEM模块 访存 服务于Lw和Sw
+module MEM(
+	input wire rst,		
+	input wire [5:0] op,
+	input wire [31:0] regcData,
+	input wire [4:0] regcAddr,
+	input wire regcWr,
+	input wire [31:0] memAddr_i,
+	input wire [31:0] memData,	
+	input  wire [31:0] rdData,
+	output wire [4:0]  regAddr,
+	output wire regWr,
+	output reg [31:0] regData,	
+	output reg [31:0] memAddr,
+	output reg [31:0] wtData,
+	output reg memWr,	
+	output reg memCe
+);
+    assign regAddr = regcAddr;    
+    assign regWr = regcWr;    
+    assign regData = (op == `Lw) ? rdData : regcData;    
+    assign memAddr = memAddr_i;
+    always @ (*)        
+        if(rst == `RstEnable)          
+        begin            
+            wtData = `Zero;            
+            memWr = `RamUnWrite;            
+            memCe = `RamDisable;          
+        end        
+        else
+    case(op)                
+        `Lw: // 读内存 写入寄存器                  
+            begin                    
+                wtData = `Zero;                        
+                memWr = `RamUnWrite;                     
+                memCe = `RamEnable;                    
+            end                
+        `Sw: // 读寄存器 写入内存                  
+            begin                    
+                wtData = memData;                    
+                memWr = `RamWrite;                      
+                memCe = `RamEnable;                   
+            end
+        default:                  
+            begin                    
+                wtData = `Zero;                    
+                memWr = `RamUnWrite;                    
+                memCe = `RamDisable;                  
+            end            
+    endcase
+endmodule
+
+// DataMem模块 数据存储器 服务于Lw和Sw
+module DataMem(
+        input wire clk,
+        input wire ce,
+        input wire we,
+        input wire [31:0] addr,
+        input wire [31:0] dataIn,
+        output reg [31:0] dataOut
+);
+    reg [31:0] datamem [1023 : 0];
+    always@(*)      
+        if(ce == `RamDisable)
+            dataout = `Zero;
+        else
+            dataout = datamem[addr[11 : 2]]; 
+    always@(posedge clk)
+        if(ce == `RamEnable && we == `RamWrite)
+            datamem[addr[11 : 2]] = datain;
+        else 
+            ;
 endmodule
 
 module RegFile(
@@ -401,14 +516,14 @@ module MIPS(
     wire regcWrite_id, regcWrite_ex;
     wire [4:0] regcAddr_id, regcAddr_ex;
 
-    IF if1(
+    IF if0(
     .clk(clk),
     .rst(rst),
     .ce(romCe), 
     .pc(instAddr)
     );
 
-    ID id1(
+    ID id0(
     .rst(rst),        
     .inst(instruction),
     .regaData_i(regaData_regFile),
@@ -424,9 +539,9 @@ module MIPS(
     .regcAddr(regcAddr_id)
     );
 
-    EX ex1(
+    EX ex0(
     .rst(rst),
-    .op(op),        
+    .op_i(op),        
     .regaData(regaData_id),
     .regbData(regbData_id),
     .regcWrite_i(regcWrite_id),
@@ -436,7 +551,7 @@ module MIPS(
     .regcAddr(regcAddr_ex)
     );
 
-    RegFile regfile1(
+    RegFile regfile0(
     .clk(clk),
     .rst(rst),
     .we(regcWrite_ex),
@@ -497,19 +612,40 @@ module SoC(
     wire [31:0] instruction;
     wire romCe;
 
-    MIPS mips1(
+    wire memCe, memWr;    
+    wire [31:0] memAddr;
+    wire [31:0] rdData;
+    wire [31:0] wtData;
+
+
+    MIPS mips0(
     .clk(clk),
     .rst(rst),
     .instruction(instruction),
     .instAddr(instAddr),
     .romCe(romCe)
+    .rdData(rdData),        
+    .wtData(wtData),        
+    .memAddr(memAddr),        
+    .memCe(memCe),        
+    .memWr(memWr)    
     );
 
-    InstMem instrom1(
+    InstMem instrom0(
     .ce(romCe),
     .addr(instAddr),
     .data(instruction)
     );
+
+    DataMem datamem0(       
+    .ce(memCe),        
+    .clk(clk),        
+    .we(memWr),        
+    .addr(memAddr),        
+    .rdData(rdData),        
+    .wtData(wtData)   
+);
+
 
 endmodule
 
