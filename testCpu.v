@@ -6,38 +6,46 @@
 `define Valid 1'b1
 `define Invalid 1'b0
 
-`define Inst_ori 6'b001101
-`define Or 6'b001101
-`define Inst_andi 6'b001100
-`define And 6'b001100
-`define Inst_xori 6'b001110
-`define Xor 6'b001110
-`define Inst_addi 6'b001000
-`define Add 6'b001000
-`define Inst_subi 6'b001001
-`define Sub 6'b001001
-`define Inst_lui 6'b001111
-`define Lui 6'b001111
+`define Nop 6'b000000
 
+// ID begin
+// I型指令
+`define Inst_ori 6'b001101
+`define Inst_andi 6'b001100
+`define Inst_xori 6'b001110
+`define Inst_addi 6'b001000
+`define Inst_subi 6'b001001
+`define Inst_lui 6'b001111
+
+// R型指令
 `define Inst_r 6'b000000 
 `define Inst_or 6'b100101 
 `define Inst_and 6'b100000 
 `define Inst_xor 6'b100110
 `define Inst_add 6'b100100
-
 `define Inst_sll 6'b000000  
 `define Inst_sub 6'b100010 
 `define Inst_srl 6'b000010 
 `define Inst_sra 6'b000011 
 
+// J型指令
+
+// ID end
+
+// Ex操作
+`define Or 6'b001101
+`define And 6'b001100
+`define Xor 6'b001110
+`define Add 6'b001000
+`define Sub 6'b001001
+`define Lui 6'b001111
 `define Sll 6'b000000
 `define Subr 6'b100010
 `define Srl 6'b000010
 `define Sra 6'b000011
 
-`define Nop 6'b000000
 
-module IFr(
+module IF(
     input wire clk,
     input wire rst,
     output reg ce, 
@@ -58,7 +66,7 @@ module IFr(
     end
 endmodule
 
-module IDr (
+module ID (
     input wire rst,    
     input wire [31:0] inst,
     input wire [31:0] regaData_i,
@@ -92,7 +100,7 @@ module IDr (
             case (inst_op)
         `Inst_r: begin
         case(inst_func)
-           `Inst_or: begin
+            `Inst_or: begin
             op = `Or;
                 regaRead = `Valid;
                 regbRead = `Valid;
@@ -184,7 +192,7 @@ module IDr (
                     imm = `Zero;    
             end         
         endcase
-         end            
+        end            
         `Inst_ori: begin
                     op = `Or;
                     regaRead = `Valid;
@@ -278,7 +286,7 @@ module IDr (
     end
 endmodule
 
-module EXr (
+module EX (
     input wire rst,
     input wire [5:0] op,
     input wire [31:0] regaData,
@@ -354,14 +362,14 @@ module RegFile(
             regbData = `Zero;
         else    
             regbData = reg32[regbAddr];
-     always@(posedge clk)
+    always@(posedge clk)
         if(rst == `RstDisable)
             if((we == `Valid) && (waddr != `Zero))
                 reg32[waddr] = wdata;
         else ; 
 endmodule
 
-module MIPSr(
+module MIPS(
     input wire clk,
     input wire rst,
     input wire [31:0] instruction,
@@ -378,14 +386,14 @@ module MIPSr(
     wire regcWrite_id, regcWrite_ex;
     wire [4:0] regcAddr_id, regcAddr_ex;
 
-    IFr if1(
+    IF if1(
     .clk(clk),
     .rst(rst),
     .ce(romCe), 
     .pc(instAddr)
     );
 
-    IDr id1(
+    ID id1(
     .rst(rst),        
     .inst(instruction),
     .regaData_i(regaData_regFile),
@@ -401,7 +409,7 @@ module MIPSr(
     .regcAddr(regcAddr_id)
     );
 
-    EXr ex1(
+    EX ex1(
     .rst(rst),
     .op(op),        
     .regaData(regaData_id),
@@ -413,7 +421,7 @@ module MIPSr(
     .regcAddr(regcAddr_ex)
     );
 
-    RegFiler regfile1(
+    RegFile regfile1(
     .clk(clk),
     .rst(rst),
     .we(regcWrite_ex),
@@ -429,7 +437,7 @@ module MIPSr(
 
 endmodule
 
-module InstMemr(
+module InstMem(
     input wire ce,
     input wire [31:0] addr,
     output reg [31:0] data
@@ -465,7 +473,7 @@ module InstMemr(
     end
 endmodule
 
-module SoCr(
+module SoC(
     input wire clk,
     input wire rst
 );
@@ -474,7 +482,7 @@ module SoCr(
     wire [31:0] instruction;
     wire romCe;
 
-    MIPSr mips1(
+    MIPS mips1(
     .clk(clk),
     .rst(rst),
     .instruction(instruction),
@@ -482,7 +490,7 @@ module SoCr(
     .romCe(romCe)
     );
 
-    InstMemr instrom1(
+    InstMem instrom1(
     .ce(romCe),
     .addr(instAddr),
     .data(instruction)
@@ -490,7 +498,7 @@ module SoCr(
 
 endmodule
 
-module soc_tbr;
+module soc_tb;
 
     reg clk;
     reg rst;
@@ -505,7 +513,7 @@ module soc_tbr;
 
     always #10 clk = ~ clk;
 
-    SoCr socr(
+    SoC soc(
     .clk(clk), 
     .rst(rst)
     );
