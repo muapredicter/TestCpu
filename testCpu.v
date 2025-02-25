@@ -77,6 +77,11 @@
 `define Lw 6'b010000
 `define Sw 6'b010001
 
+`define Mult 6`b010010
+`define Multu 6`b010011
+`define Div 6`b010100
+`define Divu 6`b010101
+
 module IF(
     input wire clk,
     input wire rst,
@@ -173,7 +178,7 @@ module ID (
                             regcAddr = inst[15:11];
                             imm = `Zero;
                         end
-                    `Inst_sub: begin
+                        `Inst_sub: begin
                             op = `Subr;
                             regaRead = `Valid;
                             regbRead = `Valid;
@@ -183,7 +188,7 @@ module ID (
                             regcAddr = inst[15:11];
                             imm = `Zero;
                         end
-                    `Inst_sll: begin
+                        `Inst_sll: begin
                             op = `Sll; 
                             regaRead = `Invalid;
                             regbRead = `Valid; 
@@ -193,7 +198,7 @@ module ID (
                             regcAddr = inst[15:11];
                             imm = {27'h0, inst[10:6]};
                         end
-                    `Inst_srl: begin
+                        `Inst_srl: begin
                             op = `Srl;
                             regaRead = `Invalid;
                             regbRead = `Valid;
@@ -203,7 +208,7 @@ module ID (
                             regcAddr = inst[15:11];
                             imm = {27'h0, inst[10:6]};
                         end
-                    `Inst_sra: begin
+                        `Inst_sra: begin
                             op = `Sra;
                             regaRead = `Invalid;
                             regbRead = `Valid;
@@ -213,15 +218,55 @@ module ID (
                             regcAddr = inst[15:11];
                             imm = {27'h0, inst[10:6]};
                         end
-                    default: begin
-                        op = `Nop;
-                        regaRead = `Invalid;
-                        regbRead = `Invalid;
-                        regcWrite = `Invalid;
-                        regaAddr = 5'h0;
-                        regbAddr = 5'h0;
-                        regcAddr = 5'h0;
-                        imm = `Zero;    
+                        `Inst_mult: begin
+                            op = `Mult;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Zero;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = `Zero;
+                            imm = `Zero;
+                        end
+                        `Inst_multu: begin 
+                            op = `Multu;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Zero;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = `Zero;
+                            imm = `Zero;
+                        end 
+                        `Inst_div: begin
+                            op = `Div;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Zero;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = `Zero;
+                            imm = `Zero;
+                        end
+                        `Inst_divu begin
+                            op = `Divu;
+                            regaRead = `Valid;
+                            regbRead = `Valid;
+                            regcWrite = `Zero;
+                            regaAddr = inst[25:21];
+                            regbAddr = inst[20:16];
+                            regcAddr = `Zero;
+                            imm = `Zero;
+                        end
+                        default: begin
+                            op = `Nop;
+                            regaRead = `Invalid;
+                            regbRead = `Invalid;
+                            regcWrite = `Invalid;
+                            regaAddr = 5'h0;
+                            regbAddr = 5'h0;
+                            regcAddr = 5'h0;
+                            imm = `Zero;    
                         end         
                 endcase
             end            
@@ -386,8 +431,35 @@ module EX (
                 `Sra:
                 regcData = $signed(regbData) >>> regaData; 
 
-    default:
-                regcData = `Zero;
+                `Mult:
+                    begin
+                        whi=`Valid;
+                        wlo=`Valid;
+                        {wHiData,wLoData}=$signed(regaData)*$signed(regbData);
+                    end
+                `Multu:
+                    begin
+                        whi=`Valid;
+                        wlo=`Valid;
+                        {wHiData,wLoData}=regaData*regbData;
+                    end
+                `Div:
+                    begin
+                        whi=`Valid;
+                        wlo=`Valid;
+                        wHiData=$signed(regaData)%$signed(regbData);
+                        wLoData=$signed(regaData)/$signed(regbData);
+                    end
+                `Divu:
+                    begin
+                        whi=`Valid;
+                        wlo=`Valid;
+                        wHiData=regaData%regbData;
+                        wLoData=regaData/regbData;
+                    end
+
+                default:
+                        regcData = `Zero;
             endcase
         end
 
@@ -470,6 +542,40 @@ module DataMem(
             ;
 endmodule
 
+module HiLo (
+	input wire rst,
+	input wire clk ,
+	input wire [31:0] wHiData,
+	input wire [31:0] wLoData,
+	input wire whi ,
+	input wire wlo ,
+	output reg [31:0] rHiData,
+	output reg [31:0] rLoData
+);
+	reg [31:0]hi,lo; 
+	always@ (*)
+		if(rst==`RstEnable)
+			begin
+				rHiData = `Zero;
+				rLoData = `Zero;
+			end
+		else
+			begin
+				rHiData = hi;
+				rLoData = lo;
+			end
+	always@(posedge clk)
+		if (rst ==`RstDisable && whi==`Valid)
+			hi=wHiData;
+		else 
+            ;
+	always@(posedge clk)
+		if (rst ==`RstDisable && wlo==`Valid)
+			lo=wLoData;
+		else 
+            ;
+endmodule
+
 module RegFile(
     input wire clk,
     input wire rst,
@@ -502,7 +608,8 @@ module RegFile(
         if(rst == `RstDisable)
             if((we == `Valid) && (waddr != `Zero))
                 reg32[waddr] = wdata;
-        else ; 
+        else 
+            ; 
 endmodule
 
 module MIPS(
@@ -521,6 +628,13 @@ module MIPS(
     wire [4:0] regaAddr, regbAddr;
     wire regcWrite_id, regcWrite_ex;
     wire [4:0] regcAddr_id, regcAddr_ex;
+
+    wire [31:0] wHiData_ex;
+	wire [31:0] wLoData_ex;
+	wire whi;
+	wire wlo;
+	wire [31:0] rHiData_ex;
+	wire [31:0] rLoData_ex;
 
     IF if0(
     .clk(clk),
@@ -570,6 +684,17 @@ module MIPS(
     .regaData(regaData_regFile),
     .regbData(regbData_regFile)
     );
+
+    HiLo hilo0(
+	.rst(rst),
+	.clk(clk),
+	.wHiData(wHiData_ex),
+	.wLoData(wLoData_ex),
+	.whi(whi_ex),
+	.wlo(wlo_ex),
+	.rHiData(rHiData_ex),
+	.rLoData(rLoData_ex)
+	);
 
 endmodule
 
