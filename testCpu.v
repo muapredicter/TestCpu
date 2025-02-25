@@ -35,6 +35,12 @@
 `define Inst_srl 6'b000010 
 `define Inst_sra 6'b000011 
 
+// 乘除指令
+`define Inst_mult 6`b011000 // 带符号数
+`define Inst_multu 6`b011001 // 无符号数
+`define Inst_div 6`b011010 // 带符号数
+`define Inst_divu 6`b011011 // 无符号数
+
 // J型指令
 `define Inst_j   6'b000110
 `define Inst_jal 6'b000101
