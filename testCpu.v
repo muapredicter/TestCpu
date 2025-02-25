@@ -85,6 +85,8 @@
 module IF(
     input wire clk,
     input wire rst,
+    input wire [31:0] jAddr,
+    input wire jCe,
     output reg ce, 
     output reg [31:0] pc
 );
@@ -98,6 +100,8 @@ module IF(
     always @(posedge clk) begin
         if (ce == `RomDisable)
             pc = `Zero;
+        else if(jCe == 'Valid)
+            pc =  jAddr;
         else
             pc = pc + 4;
     end
@@ -105,6 +109,7 @@ endmodule
 
 module ID (
     input wire rst,    
+    input wire [31:0] pc,	
     input wire [31:0] inst,
     input wire [31:0] regaData_i,
     input wire [31:0] regbData_i,
@@ -116,9 +121,11 @@ module ID (
     output reg regcWrite,
     output reg [4:0] regaAddr,
     output reg [4:0] regbAddr,    
-    output reg [4:0] regcAddr
+    output reg [4:0] regcAddr,
+    output reg [31:0] jAddr,	
+    output reg jCe
 );
-
+    wire [31:0] npc = pc + 4;
     wire [5:0] inst_op = inst[31:26]; 
     wire [5:0] inst_func =inst[5:0];
     reg [31:0] imm;
@@ -133,8 +140,12 @@ module ID (
             regbAddr = 5'h0;
             regcAddr = 5'h0;
             imm = `Zero;
+            jCe = `Invalid;
+            jAddr = `Zero;
         end 
         else begin
+            jCe = `Invalid;
+            jAddr = `Zero;
             case (inst_op) // R型指令
                 `Inst_r: begin
                     case(inst_func)
@@ -248,7 +259,7 @@ module ID (
                             regcAddr = `Zero;
                             imm = `Zero;
                         end
-                        `Inst_divu begin
+                        `Inst_divu: begin
                             op = `Divu;
                             regaRead = `Valid;
                             regbRead = `Valid;
@@ -258,6 +269,30 @@ module ID (
                             regcAddr = `Zero;
                             imm = `Zero;
                         end
+                        `Inst_jr: begin
+					   	    op = `J;
+					   	    regaRead = `Valid;
+					   	    regbRead = `Invalid;
+						    regcWrite = `Invalid;
+				   		    regaAddr = inst[25:21];
+					  	    regbAddr = `Zero;
+					 	    regcAddr = `Zero;
+				   		    jAddr = regaData;//regaData=(regaAddr)
+			        	    jCe = `Valid;
+				   		    imm = `Zero;
+				 		end
+					    `Inst_jalr:begin
+					   	    op = `Jal;
+					   	    regaRead = `Valid;
+					   	    regbRead = `Invalid;
+					   	    regcWrite = `Valid;
+				   		    regaAddr = inst[25:21];
+					   	    regbAddr = `Zero;
+					  	    regcAddr = 5'b11111;
+				   		    jAddr = regaData;
+			                jCe = `Valid;
+				   		    imm = npc;
+				 		end
                         default: begin
                             op = `Nop;
                             regaRead = `Invalid;
@@ -350,6 +385,90 @@ module ID (
                     regcAddr = `Zero;
                     imm = {{16{inst[15]}},inst[15:0]};
                 end 
+        `Inst_j: begin // j型指令
+                    op = `J;
+                    regaRead = `Invalid;
+				    regbRead = `Invalid;
+				    regcWrite = `Invalid;
+				    regaAddr = `Zero;
+				    regbAddr = `Zero;
+                    regcAddr = `Zero;
+                    jAddr = {npc[31:28], inst[25:0], 2'b00};
+			        jCe = `Valid;
+                    imm = `Zero;
+                end
+        `Inst_jal: begin
+                    op = `Jal;
+				    regaRead = `Invalid;
+				    regbRead = `Invalid;
+				    regcWrite = `Valid;
+				    regaAddr = `Zero;
+				    regbAddr = `Zero;
+				    regcAddr = 5'b11111;
+				    jAddr = {npc[31:28], inst[25:0], 2'b00};
+			        jCe = `Valid;
+				    imm = npc;
+                end
+        `Inst_beq: begin
+                    op = `Beq;
+					regaRead = `Valid;
+					regbRead = `Valid;
+					regcWrite = `Invalid;
+					regaAddr = inst[25:21];
+					regbAddr = inst[20:16];
+					regcAddr = `Zero;
+					jAddr = npc + {{14{inst[15]}},inst[15:0], 2'b00};		
+					if(regaData == regbData)
+					    jCe = `Valid;
+					else
+						jCe = `Invalid;
+					imm = `Zero;
+                end
+        `Inst_bne:begin
+					op = `Bne;
+					regaRead = `Valid;
+					regbRead = `Valid;
+					regcWrite = `Invalid;
+					regaAddr = inst[25:21];
+					regbAddr = inst[20:16];
+					regcAddr = `Zero;
+					jAddr = npc + {{14{inst[15]}}, inst[15:0], 2'b00};		
+					if(regaData != regbData)
+				        jCe = `Valid;
+					else
+					    jCe = `Invalid;
+					   	imm = `Zero;
+				end		
+		`Inst_bltz:begin
+					op = `Bltz;
+					regaRead = `Valid;
+					regbRead = `Valid;
+					regcWrite = `Invalid;
+					regaAddr = inst[25:21];
+					regbAddr = inst[20:16];
+					regcAddr = `Zero;
+					jAddr = npc+{{14{inst[15]}},inst[15:0], 2'b00};
+					if(regaData<regbData)
+				        jCe = `Valid;
+					else
+					    jCe = `Invalid;
+					   	imm = 32'b0;
+				end		
+		`Inst_bgtz:begin
+					op = `Bgtz;
+					regaRead = `Valid;
+					regbRead = `Invalid;
+					regcWrite = `Invalid;
+					regaAddr = inst[25:21];
+					regbAddr = inst[20:16];
+					regcAddr = `Zero;
+					jAddr = npc+{{14{inst[15]}},inst[15:0], 2'b00};		
+					if(regaData>regbData)
+				        jCe = `Valid;//????
+					else
+						jCe = `Invalid;
+					   	imm = 32'b0;
+				end	
         default: begin
                     op = `Nop;
                     regaRead = `Invalid;
@@ -430,7 +549,19 @@ module EX (
                 regcData = regbData >> regaData;
                 `Sra:
                 regcData = $signed(regbData) >>> regaData; 
-
+                //j型指令
+                `J:
+                regcData = `Zero;
+		        `Jal:
+                regcData = regbData;
+		        `Beq:
+		        regcData = `Zero;
+	            `Bne:
+		        regcData = `Zero;
+		        `Bltz:
+		        regcData = `Zero;
+		        `Bgtz:
+		        regcData = `Zero;
                 `Mult:
                     begin
                         whi=`Valid;
