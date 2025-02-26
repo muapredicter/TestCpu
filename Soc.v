@@ -23,13 +23,13 @@ MIPS mips0(
     .clk(clk),
     .rst(rst),
     .instruction(instruction),
-    rdData(rdData),
+    .rdData(rdData),
     .romCe(romCe),
     .instAddr(instAddr),
-    wtData(wtData),
-    memAddr(memAddr),
-    memCe(memCe),
-    memWr(memWr)
+    .wtData(wtData),
+    .memAddr(memAddr),
+    .memCe(memCe),
+    .memWr(memWr)
 );
 
 InstMem instrom0(

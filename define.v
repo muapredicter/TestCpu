@@ -54,6 +54,15 @@
 `define Inst_bne  6'b010001
 `define Inst_bltz 6'b010010
 `define Inst_bgtz 6'b010011
+
+// 中断指令
+`define Inst_interruption 6'b010000 
+`define Inst_mfc0 5`b00000 // 读CP0
+`define Inst_mtc0 5`b00100 // 写CP0
+
+`define Inst_syscall 32'b000000_00000_000000000000000_001100 // 用户态陷入内核态
+`define Inst_eret 32'b010000_10000_000000000000000_011000 // 内核态返回用户态
+
 // ID end
 
 // Ex操作
@@ -88,3 +97,8 @@
 
 `define Ll 6`b010110
 `define Sc 6`b010111
+
+`define Mfc0 6`b011000
+`define Mtc0 6`b011001
+`define Syscall 6`b011010
+`define Eret 6`b011011

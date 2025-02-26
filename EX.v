@@ -21,15 +21,45 @@ module EX (
     output reg wlo,	
     output reg [31:0] wHiData,	
     output reg [31:0] wLoData
+    // 中断处理指令添加
+    output reg cp0we,			
+	output reg [4:0] cp0Addr,	
+	output reg [31:0] cp0wData,	
+	input wire[31:0] cp0rData,	
+	input wire[31:0] pc_i,		
+	input wire [31:0] excptype_i,
+	output reg [31:0] excptype,	
+	output wire [31:0] epc, // 中断发生时的pc
+	output wire [31:0] pc,  // 中断处理的pc
+	input wire [31:0] cause,	
+	input wire [31:0] status	
 );
     assign op = op_i;
     assign memAddr = regaData;
     assign memData = regbData;
 
+    assign pc = pc_i;
+	assign op = (excptype == `Zero) ? op_i : `Nop;
+	assign regcWrite =(excptype == `Zero) ? regcWrite_i : `Invalid;
+
     always @(*) begin
-        if (rst == `RstEnable)
+        if (rst == `RstEnable) begin
             regcData = `Zero;
+            whi = `Invalid;
+            wlo = `Invalid;
+            wHiData = `Zero;
+            wLoData = `Zero;
+            cp0we = `Invalid;
+            cp0wData = `Zero;
+            cp0Addr = `CP0_epc;
+        end
         else begin
+            regcData = `Zero;
+            wHiData = `Zero;
+            wLoData = `Zero;
+            cp0we = `Invalid;
+            cp0wData = `Zero;
+            cp0Addr = `CP0_epc;
             case (op_i)
                 `Or:
                     regcData = regaData | regbData;
@@ -54,16 +84,16 @@ module EX (
                 //j型指令
                 `J:
                 regcData = `Zero;
-		        `Jal:
+                `Jal:
                 regcData = regbData;
-		        `Beq:
-		        regcData = `Zero;
-	            `Bne:
-		        regcData = `Zero;
-		        `Bltz:
-		        regcData = `Zero;
-		        `Bgtz:
-		        regcData = `Zero;
+                `Beq:
+                regcData = `Zero;
+                `Bne:
+                regcData = `Zero;
+                `Bltz:
+                regcData = `Zero;
+                `Bgtz:
+                regcData = `Zero;
                 `Mult:
                     begin
                         whi=`Valid;
@@ -90,13 +120,41 @@ module EX (
                         wHiData=regaData%regbData;
                         wLoData=regaData/regbData;
                     end
-
+                // 中断处理指令
+                `Mfc0:
+                    begin
+                        cp0Addr = regbData[4:0];
+                        regcData = cp0rData;
+                    end
+                `Mtc0:
+                    begin
+                        regcData= `Zero;
+                        cp0we = `Valid;
+                        cp0Addr = regbData[4:0];
+                        cp0wData = regaData;
+                    end
                 default:
                         regcData = `Zero;
             endcase
         end
 
-        regcWrite = regcWrite_i;
-        regcAddr = regcAddr_i;
+    assign epc = (excptype == 32'h0000_0200) ? cp0rData : `Zero;
+
+	always@(*)
+		if(rst ==`RstEnable)
+			excptype = `Zero;
+		else if(cause[10]&& status[10]== 1'b1 && status[1:0] == 2'b01)
+			//定时时钟中断
+			excptype = 32'h0000_0004;
+		else if(excptype_i[8] == 1'b1 && status[1] == 1'b0)
+			//陷入内核态   
+			excptype = 32'h00000100;
+		else if(excptype_i[9]== 1'b1)
+			//返回用户态
+			excptype = 32'h0000_0200;
+		else
+			excptype = `Zero;    
+	assign regcWrite = regcWrite_i;
+	assign regcAddr = regcAddr_i;
     end
 endmodule
