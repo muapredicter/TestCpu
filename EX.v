@@ -29,7 +29,7 @@ module EX (
 	input wire[31:0] pc_i,		
 	input wire [31:0] excptype_i,
 	output reg [31:0] excptype,	
-	output wire [31:0] epc, // 中断发生时的pc
+	output wire [31:0] epc, // 从中断处理程序的返回地址
 	output wire [31:0] pc,  // 中断处理的pc
 	input wire [31:0] cause,	
 	input wire [31:0] status	

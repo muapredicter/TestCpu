@@ -12,6 +12,9 @@ module MIPS(
     output wire [31:0] memAddr, 
     output wire memCe,
     output wire memWr
+    // 异常处理
+    input wire [31:0] ejpc,
+    input wire excpt, 
 );
 
 // IF
@@ -25,6 +28,8 @@ wire regaRead, regbRead;
 wire regcWrite_id;
 wire [4:0] regaAddr, regbAddr;
 wire [4:0] regcAddr_id;
+wire [31:0] excptype_id;
+wire [31:0] pc_id;
 
 // EX
 wire [31:0] regcData_ex;
@@ -34,6 +39,9 @@ wire [5:0] op_ex;
 wire [31:0] memAddr_ex, memData_ex;
 wire whi_ex, whi_ex;
 wire [31:0] wHiData_ex, wHiData_ex;
+wire [31:0] pc_ex;
+wire [31:0] excptype_ex;
+wire [31:0] pc_ex;
 
 // MEM
 wire [31:0] rdData_datamem;
@@ -56,6 +64,18 @@ wire excpt;
 
 // HiLo
 wire [31:0] rHiData_hilo,rHiData_hilo;
+
+// CP0
+wire cp0we;
+wire [31:0] cp0wData;
+wire [4:0] cp0Addr;
+wire [31:0] cp0rData;
+wire [31:0] cause;
+wire [31:0] status;
+
+// Ctrl
+wire [31:0] ejpc;
+
 
 IF if0(
     .clk(clk),

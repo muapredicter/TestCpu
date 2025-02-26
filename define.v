@@ -11,6 +11,21 @@
 `define RamUnWrite 1`b0
 `define RamWrite 1`b1
 
+// 原子指令设置当前内存地址是否被监视
+`define SetFlag 1`b1
+`define ClearFlag 1`b0
+
+// CP0 
+`define IntrOccur 1`b1
+`define IntrNotOccur 1`b0
+`define CP0_epc 32`b0
+// CP0寄存器号
+`define CP0_count 5'd9
+`define CP0_compare 5'd11
+`define CP0_status 5'd12
+`define CP0_epc 5'd14
+`define CP0_cause 5'd13
+
 // ID begin
 // I型指令
 `define Inst_ori 6'b001101
