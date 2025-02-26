@@ -14,7 +14,13 @@ module EX (
     output reg [5:0] op,
     output wire [31:0] memAddr,
     output wire [31:0] memData
-
+    // 乘法除法指令添加
+    input wire [31:0] rHiData,
+    input wire [31:0] rLoData,
+    output reg whi,	
+    output reg wlo,	
+    output reg [31:0] wHiData,	
+    output reg [31:0] wLoData
 );
     assign op = op_i;
     assign memAddr = regaData;

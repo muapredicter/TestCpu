@@ -12,7 +12,6 @@ module MEM(
 	input  wire [31:0] rdData,
     // ll & sc
     input wire rLLbit,
-
 	output wire [4:0]  regAddr,
 	output wire regWr,
 	output reg [31:0] regData,	
