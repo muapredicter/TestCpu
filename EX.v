@@ -20,7 +20,7 @@ module EX (
     output reg whi,	
     output reg wlo,	
     output reg [31:0] wHiData,	
-    output reg [31:0] wLoData
+    output reg [31:0] wLoData,
     // 中断处理指令添加
     output reg cp0we,			
 	output reg [4:0] cp0Addr,	

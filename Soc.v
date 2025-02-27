@@ -19,6 +19,11 @@ wire [31:0] instruction;
 // DataMem
 wire [31:0] rdData;
 
+// CP0
+wire [5:0] intr;
+wire intimer;
+assign intr={5'b0,intimer};
+
 MIPS mips0(
     .clk(clk),
     .rst(rst),
@@ -30,6 +35,8 @@ MIPS mips0(
     .memAddr(memAddr),
     .memCe(memCe),
     .memWr(memWr)
+    .intr(intr),
+    .intimer(intimer)
 );
 
 InstMem instrom0(

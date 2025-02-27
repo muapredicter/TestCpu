@@ -11,10 +11,10 @@ module MIPS(
     output wire [31:0] wtData, 
     output wire [31:0] memAddr, 
     output wire memCe,
-    output wire memWr
+    output wire memWr,
     // 异常处理
-    input wire [31:0] ejpc,
-    input wire excpt, 
+    input wire [5:0] intr,    // 中断
+    output wire intimer    // 定时器;
 );
 
 // IF
@@ -83,7 +83,9 @@ IF if0(
     .jAddr(jAddr),
     .jCe(jCe),
     .ce(romCe),
-    .pc(instAddr)
+    .pc(instAddr),
+    .ejpc(ejpc),
+    .excpet(excpt)   
 );
 
 ID id0(
@@ -102,7 +104,9 @@ ID id0(
     .regbAddr(regbAddr),
     .regcAddr(regcAddr_id),
     .jAddr(jAddr),
-    .jCe(jCe)
+    .jCe(jCe),
+    .pc(pc_id),
+    .excptype(excptype_id)
 );
 
 EX ex0(
@@ -123,7 +127,18 @@ EX ex0(
     .whi(whi_ex),
     .wlo(whi_ex),
     .wHiData(wHiData_ex),
-    .wLoData(wHiData_ex)
+    .wLoData(wHiData_ex),
+    .cp0we(cp0we),
+    .cp0Addr(cp0Addr),
+    .cp0wData(cp0wData),
+    .cp0rData(cp0rData),
+    .pc_i(pc_id),
+    .excptype_i(excptype_id),
+    .excptype(excptype_ex),
+    .epc(epc_ex),
+    .pc(pc_ex)
+    .casue(cause),
+    .status(status)
 );
 
 MEM mem0(
@@ -179,6 +194,29 @@ HiLo hilo0(
     .wlo(wlo_ex),
     .rHiData(rHiData_hilo),
     .rLoData(rLoData_hilo)
+);
+
+CP0 cp0(
+    .clk(clk),
+    .rst(rst),
+    .cp0we(cp0we),
+    .cp0Addr(cp0Addr),
+    .cp0wData(cp0wData),
+    .cp0rData(cp0rData),
+    .intr(intr),
+    .intimer(intimer),
+    .excptype(excptype_ex),
+    .pc(pc_ex),
+    .cause(cause),
+    .status(status)
+);
+
+Ctrl ctrl0(
+    .rst(rst),
+    .excptype(excptype_ex),
+    .epc(epc_ex),
+    .ejpc(ejpc),
+    .excpt(excpt)
 );
 
 endmodule
