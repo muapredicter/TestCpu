@@ -37,11 +37,10 @@ wire regcWrite_ex;
 wire [4:0] regcAddr_ex;
 wire [5:0] op_ex;
 wire [31:0] memAddr_ex, memData_ex;
-wire whi_ex, whi_ex;
-wire [31:0] wHiData_ex, wHiData_ex;
+wire whi_ex, wl0_ex;
+wire [31:0] wHiData_ex, wLoData_ex;
 wire [31:0] pc_ex;
 wire [31:0] excptype_ex;
-wire [31:0] pc_ex;
 
 // MEM
 wire [31:0] rdData_datamem;
@@ -63,7 +62,7 @@ wire rLLbit_llbit;
 wire excpt;
 
 // HiLo
-wire [31:0] rHiData_hilo,rHiData_hilo;
+wire [31:0] rHiData_hilo,rLoData_hilo;
 
 // CP0
 wire cp0we;
@@ -93,7 +92,7 @@ ID id0(
     .pc_i(instAddr),
     .inst(instruction),
     .regaData_i(regaData_regFile),
-    .regaData_i(regbData_regFile),
+    .regbData_i(regbData_regFile),
     .op(op_id),
     .regaData(regaData_id),
     .regbData(regbData_id),
@@ -125,9 +124,9 @@ EX ex0(
     .rHiData(rHiData_hilo),
     .rLoData(rLoData_hilo),
     .whi(whi_ex),
-    .wlo(whi_ex),
+    .wlo(wlo_ex),
     .wHiData(wHiData_ex),
-    .wLoData(wHiData_ex),
+    .wLoData(wLoData_ex),
     .cp0we(cp0we),
     .cp0Addr(cp0Addr),
     .cp0wData(cp0wData),
@@ -136,7 +135,7 @@ EX ex0(
     .excptype_i(excptype_id),
     .excptype(excptype_ex),
     .epc(epc_ex),
-    .pc(pc_ex)
+    .pc(pc_ex),
     .casue(cause),
     .status(status)
 );

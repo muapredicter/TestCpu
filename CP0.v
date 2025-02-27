@@ -3,18 +3,18 @@
 module CP0(
     input wire clk,
     input wire rst,
-    input wire cpowe,
+    input wire cp0we,
     input wire [4:0] cp0Addr,
     input wire [31:0] cp0wData,
-    output wire [31:0] cp0rData,
-    input wire [5:0] intr // 输入硬件中断
+    output reg [31:0] cp0rData,
+    input wire [5:0] intr, // 输入硬件中断
     output reg intimer,			
 	input wire[31:0] excptype, // 中断信息
 	input wire[31:0] pc,		
 	output wire[31:0] cause,	
 	output wire[31:0] status	
 );
-c
+
     reg [31:0] Count; // 计数器
     reg [31:0] Compare; // 比较器，与Count完成时钟中断
     reg [31:0] Status; // [15:8]对应Cause中断IP，用于是否屏蔽某周中断源，[1]为Exl，表示是否在异常模式下 [0]为IE，表示是否响应中断 

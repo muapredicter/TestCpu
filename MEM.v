@@ -14,8 +14,8 @@ module MEM(
     input wire rLLbit,
 	output wire [4:0]  regAddr,
 	output wire regWr,
-	output reg [31:0] regData,	
-	output reg [31:0] memAddr,
+	output wire [31:0] regData,	
+	output wire [31:0] memAddr,
 	output reg [31:0] wtData,
 	output reg memWr,	
 	output reg memCe,
@@ -59,7 +59,7 @@ module MEM(
                 memCe = `RamEnable; 
 
                 wbit = `Valid;
-                wLLbit = `SetFlag;`
+                wLLbit = `SetFlag;
             end
         `Sc: // 读寄存器 写入内存 检测已监视地址是否被修改
             begin

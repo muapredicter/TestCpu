@@ -17,8 +17,8 @@ module ID (
     output reg [4:0] regcAddr,
     output reg [31:0] jAddr,	
     output reg jCe,
-    ouptut wire [31:0] pc,
-    ouptut wire [31:0] excptype
+    output wire [31:0] pc,
+    output wire [31:0] excptype
 );
     wire [31:0] npc = pc + 4;
     wire [5:0] inst_op = inst[31:26]; 
@@ -30,22 +30,22 @@ module ID (
     assign pc = pc_i;
 	assign excptype= {22'b0, is_eret, is_syscall,8'b0};
     
-    always @(*) begin
+    always @(*) begin 
         if (rst == `RstEnable) begin
             op = `Nop;
             regaRead = `Invalid;
             regbRead = `Invalid;
             regcWrite = `Invalid;
-            regaAddr = 5'h0;
-            regbAddr = 5'h0;
-            regcAddr = 5'h0;
+            regaAddr = `Zero;
+            regbAddr = `Zero;
+            regcAddr = `Zero;
             imm = `Zero;
             jCe = `Invalid;
             jAddr = `Zero;
             is_eret = `Invalid;
             is_syscall = `Invalid;
         end 
-        else if (inst = `Inst_eret) begin
+        else if (inst == `Inst_eret) begin
             op =`Eret;
 			regaRead = `Invalid;
 			regbRead = `Invalid;
@@ -59,7 +59,7 @@ module ID (
 			is_eret = `Valid;
 			is_syscall = `Invalid;
         end  
-        else if (inst = `Inst_syscall) begin
+        else if (inst == `Inst_syscall) begin
             op =`Eret;
 			regaRead = `Invalid;
             regbRead = `Invalid;
@@ -89,7 +89,7 @@ module ID (
                             regaAddr = `Zero;
                             regbAddr = `Zero;
                             regcAddr = inst[20:16];
-                            imm = {27`h0, inst[15:11]};
+                            imm = {27'h0, inst[15:11]};
                         end
                         `Inst_mtc0:begin
                             op = `Mtc0;
@@ -101,7 +101,7 @@ module ID (
                             regcAddr = `Zero;
                             imm= {27'h0, inst[15:11]};
                         end
-                        `default:begin
+                        default:begin
                             op = `Nop;
                             regaRead = `Invalid;
                             regbRead = `Invalid;
@@ -156,7 +156,7 @@ module ID (
                             imm = `Zero;
                         end
                         `Inst_sub: begin
-                            op = `Subr;
+                            op = `Sub;
                             regaRead = `Valid;
                             regbRead = `Valid;
                             regcWrite = `Valid;

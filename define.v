@@ -6,19 +6,19 @@
 `define Valid 1'b1
 `define Invalid 1'b0
 
-`define RamDisable 1`b0 
-`define RamEnable 1`b1
-`define RamUnWrite 1`b0
-`define RamWrite 1`b1
+`define RamDisable 1'b0 
+`define RamEnable 1'b1
+`define RamUnWrite 1'b0
+`define RamWrite 1'b1
 
 // 原子指令设置当前内存地址是否被监视
-`define SetFlag 1`b1
-`define ClearFlag 1`b0
+`define SetFlag 1'b1
+`define ClearFlag 1'b0
 
 // CP0 
-`define IntrOccur 1`b1
-`define IntrNotOccur 1`b0
-`define CP0_epc 32`b0
+`define IntrOccur 1'b1
+`define IntrNotOccur 1'b0
+`define CP0_epc 32'b0
 // CP0寄存器号
 `define CP0_count 5'd9
 `define CP0_compare 5'd11
@@ -55,10 +55,10 @@
 `define Inst_sra 6'b000011 
 
 // 乘除指令
-`define Inst_mult 6`b011000 // 带符号数
-`define Inst_multu 6`b011001 // 无符号数
-`define Inst_div 6`b011010 // 带符号数
-`define Inst_divu 6`b011011 // 无符号数
+`define Inst_mult 6'b011000 // 带符号数
+`define Inst_multu 6'b011001 // 无符号数
+`define Inst_div 6'b011010 // 带符号数
+`define Inst_divu 6'b011011 // 无符号数
 
 // J型指令
 `define Inst_j   6'b000110
@@ -72,8 +72,9 @@
 
 // 中断指令
 `define Inst_interruption 6'b010000 
-`define Inst_mfc0 5`b00000 // 读CP0
-`define Inst_mtc0 5`b00100 // 写CP0
+
+`define Inst_mfc0 5'b00000 // 读CP0
+`define Inst_mtc0 5'b00100 // 写CP0
 
 `define Inst_syscall 32'b000000_00000_000000000000000_001100 // 用户态陷入内核态
 `define Inst_eret 32'b010000_10000_000000000000000_011000 // 内核态返回用户态
@@ -105,15 +106,15 @@
 `define Lw 6'b010000
 `define Sw 6'b010001
 
-`define Mult 6`b010010
-`define Multu 6`b010011
-`define Div 6`b010100
-`define Divu 6`b010101
+`define Mult 6'b010010
+`define Multu 6'b010011
+`define Div 6'b010100
+`define Divu 6'b010101
 
-`define Ll 6`b010110
-`define Sc 6`b010111
+`define Ll 6'b010110
+`define Sc 6'b010111
 
-`define Mfc0 6`b011000
-`define Mtc0 6`b011001
-`define Syscall 6`b011010
-`define Eret 6`b011011
+`define Mfc0 6'b011000
+`define Mtc0 6'b011001
+`define Syscall 6'b011010
+`define Eret 6'b011011

@@ -8,12 +8,12 @@ module EX (
     input wire regcWrite_i,
     input wire [4:0] regcAddr_i,
     output reg [31:0] regcData,
-    output reg regcWrite,
-    output reg [4:0] regcAddr
+    output wire regcWrite,
+    output wire [4:0] regcAddr,
     // lw&sw指令添加
-    output reg [5:0] op,
+    output wire [5:0] op,
     output wire [31:0] memAddr,
-    output wire [31:0] memData
+    output wire [31:0] memData,
     // 乘法除法指令添加
     input wire [31:0] rHiData,
     input wire [31:0] rLoData,
@@ -34,6 +34,7 @@ module EX (
 	input wire [31:0] cause,	
 	input wire [31:0] status	
 );
+
     assign op = op_i;
     assign memAddr = regaData;
     assign memData = regbData;
@@ -42,7 +43,7 @@ module EX (
 	assign op = (excptype == `Zero) ? op_i : `Nop;
 	assign regcWrite =(excptype == `Zero) ? regcWrite_i : `Invalid;
 
-    always @(*) begin
+    always @(*)
         if (rst == `RstEnable) begin
             regcData = `Zero;
             whi = `Invalid;
@@ -73,8 +74,6 @@ module EX (
                     regcData = regaData - regbData; 
                 `Lui:
                     regcData = regbData; 
-                `Subr:
-                    regcData = regaData - regbData;
                 `Sll:
                 regcData = regbData << regaData; 
                 `Srl:
@@ -138,7 +137,7 @@ module EX (
             endcase
         end
 
-    assign epc = (excptype == 32'h0000_0200) ? cp0rData : `Zero;
+	assign epc = (excptype == 32'h0000_0200) ? cp0rData : `Zero;
 
 	always@(*)
 		if(rst ==`RstEnable)
@@ -156,5 +155,5 @@ module EX (
 			excptype = `Zero;    
 	assign regcWrite = regcWrite_i;
 	assign regcAddr = regcAddr_i;
-    end
+
 endmodule

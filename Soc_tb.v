@@ -1,6 +1,6 @@
 `include "define.v"
 
-module soc_tb;
+module Soc_tb;
 
     reg clk;
     reg rst;
@@ -15,7 +15,7 @@ module soc_tb;
 
     always #10 clk = ~ clk;
 
-    SoC soc(
+    SoC soc0(
     .clk(clk), 
     .rst(rst)
     );

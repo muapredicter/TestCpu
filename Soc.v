@@ -1,5 +1,3 @@
-`include "define.v"
-
 module SoC(
     input wire clk,
     input wire rst
@@ -34,7 +32,7 @@ MIPS mips0(
     .wtData(wtData),
     .memAddr(memAddr),
     .memCe(memCe),
-    .memWr(memWr)
+    .memWr(memWr),
     .intr(intr),
     .intimer(intimer)
 );

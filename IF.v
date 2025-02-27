@@ -22,7 +22,7 @@ module IF(
             pc = `Zero;
         else if (excpt == 1'b1)
             pc <= ejpc;
-        else if(jCe == 'Valid)
+        else if(jCe == `Valid)
             pc =  jAddr;
         else
             pc = pc + 4;
