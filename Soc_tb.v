@@ -9,7 +9,7 @@ module soc_tb;
 	begin
 		clk = 0;
 		rst = `RstEnable;
-		#90	
+		#100
 		rst = `RstDisable;
 		#1000 	$stop;        
 	end
