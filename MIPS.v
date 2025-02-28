@@ -41,6 +41,7 @@ wire whi_ex, wl0_ex;
 wire [31:0] wHiData_ex, wLoData_ex;
 wire [31:0] pc_ex;
 wire [31:0] excptype_ex;
+wire [31:0] epc_ex;
 
 // MEM
 wire [31:0] rdData_datamem;
@@ -84,7 +85,7 @@ IF if0(
     .ce(romCe),
     .pc(instAddr),
     .ejpc(ejpc),
-    .excpet(excpt)   
+    .excpt(excpt)   
 );
 
 ID id0(
@@ -136,7 +137,7 @@ EX ex0(
     .excptype(excptype_ex),
     .epc(epc_ex),
     .pc(pc_ex),
-    .casue(cause),
+    .cause(cause),
     .status(status)
 );
 
@@ -187,8 +188,8 @@ LLbit llbit0(
 HiLo hilo0(
     .rst(rst),
     .clk(clk),
-    .wHiData(whiData_ex),
-    .wLoData(wloData_ex),
+    .wHiData(wHiData_ex),
+    .wLoData(wLoData_ex),
     .whi(whi_ex),
     .wlo(wlo_ex),
     .rHiData(rHiData_hilo),

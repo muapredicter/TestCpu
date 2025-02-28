@@ -1,18 +1,16 @@
 `include "define.v"
 
-// Hilo模块 服务于乘除法
-
 module HiLo (
 	input wire rst,
-	input wire clk,
+	input wire clk ,
 	input wire [31:0] wHiData,
 	input wire [31:0] wLoData,
-	input wire whi,
-	input wire wlo,
+	input wire whi ,
+	input wire wlo ,
 	output reg [31:0] rHiData,
 	output reg [31:0] rLoData
 );
-	reg [31:0]hi,lo; 
+	reg [31:0]hi,lo;
 	always@ (*)
 		if(rst==`RstEnable)
 			begin
@@ -27,11 +25,11 @@ module HiLo (
 	always@(posedge clk)
 		if (rst ==`RstDisable && whi==`Valid)
 			hi=wHiData;
-		else 
-            ;
+		else ;
+
 	always@(posedge clk)
 		if (rst ==`RstDisable && wlo==`Valid)
 			lo=wLoData;
-		else 
-            ;
+		else ;
 endmodule
+

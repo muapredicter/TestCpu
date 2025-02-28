@@ -2,54 +2,46 @@ module SoC(
     input wire clk,
     input wire rst
 );
+	wire [31:0] instAddr;
+    wire [31:0] instruction;
+    wire romCe;
 
-// MIPS
-wire romCe;
-wire [31:0] instAddr;
-wire [31:0] wtData;
-wire [31:0] memAddr;
-wire memCe;
-wire memWr;
+    wire memCe, memWr;    
+    wire [31:0] memAddr;
+    wire [31:0] rdData;
+    wire [31:0] wtData;
 
-// InstMem
-wire [31:0] instruction;
+	wire[5:0] intr;
+	wire intimer;
+	assign intr={5'b0,intimer};
 
-// DataMem
-wire [31:0] rdData;
+	MIPS mips0(
+        .clk(clk),
+        .rst(rst),
+        .instruction(instruction),	
+		.romCe(romCe),
+        .instAddr(instAddr),
+		.rdData(rdData),        
+		.wtData(wtData),        
+		.memAddr(memAddr),        
+		.memCe(memCe),        
+		.memWr(memWr),
+		.intr(intr),
+		.intimer(intr[0])
+	);	
 
-// CP0
-wire [5:0] intr;
-wire intimer;
-assign intr={5'b0,intimer};
+	InstMem instrom0(
+        .ce(romCe),
+        .addr(instAddr),
+        .data(instruction)
+	);
 
-MIPS mips0(
-    .clk(clk),
-    .rst(rst),
-    .instruction(instruction),
-    .rdData(rdData),
-    .romCe(romCe),
-    .instAddr(instAddr),
-    .wtData(wtData),
-    .memAddr(memAddr),
-    .memCe(memCe),
-    .memWr(memWr),
-    .intr(intr),
-    .intimer(intimer)
-);
-
-InstMem instrom0(
-    .ce(romCe),
-    .addr(instAddr),
-    .data(instruction)
-);
-
-DataMem datamem0(
-    .clk(clk),
-    .ce(memCe),
-    .we(memWr),
-    .wtData(wtData),
-    .addr(memAddr),
-    .rDdata(rdData)
-); 
-
+	DataMem datamem0(       
+		.ce(memCe),        
+		.clk(clk),        
+		.we(memWr),        
+		.addr(memAddr),        
+		.wtData(wtData),        
+		.rdData(rdData)  
+	);
 endmodule
