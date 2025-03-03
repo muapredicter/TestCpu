@@ -1,3 +1,5 @@
+`include "define.v"
+
 module MIOC(
     input wire memCe,
     input wire memWr,

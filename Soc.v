@@ -1,7 +1,8 @@
 module SoC(
     input wire clk,
     input wire rst,
-	/*IO interface*/
+    input wire sw,
+    output reg [15:0] led
 );
 	wire [31:0] instAddr;
     wire [31:0] instruction;
@@ -76,5 +77,7 @@ module SoC(
 		.wtData(ioWtData),
 		.rdData(ioRdData)
 		/*IO interface*/
+		.sw(sw),
+		.led(led)
 	);
 endmodule
