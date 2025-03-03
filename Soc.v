@@ -1,7 +1,8 @@
 module SoC(
     input wire clk,
     input wire rst,
-	output reg[15:0] out
+    input wire sw,
+    output reg [15:0] led
 );
 	wire [31:0] instAddr;
     wire [31:0] instruction;
@@ -11,6 +12,10 @@ module SoC(
     wire [31:0] memAddr;
     wire [31:0] rdData;
     wire [31:0] wtData;
+
+	wire ramCe,ramWe,ioCe,ioWe;
+	wire [31:0]ramWtData,ramAddr,ramRdData;
+	wire [31:0]ioWtData,ioAddr,ioRdData;
 
 	wire[5:0] intr;
 	wire intimer;
@@ -31,6 +36,24 @@ module SoC(
 		.intimer(intr[0])
 	);	
 
+	MIOC mioc0(
+		.memCe(memCe),
+		.memWr(memWr),
+		.memAddr(memAddr),
+		.wtData(wtData),
+		.ramRdData(ramRdData),
+		.ioRdData(ioRdData),
+		.rdData(rdData),
+		.ramCe(ramCe),
+		.ramWe(ramWe),
+		.ramAddr(ramAddr),
+		.ramWtData(ramWtData),
+		.ioCe(ioCe),
+		.ioWe(ioWe),
+		.ioAddr(ioAddr),
+		.ioWtData(ioWtData)
+	)
+
 	InstMem instrom0(
         .ce(romCe),
         .addr(instAddr),
@@ -38,17 +61,23 @@ module SoC(
 	);
 
 	DataMem datamem0(       
-		.ce(memCe),        
+		.ce(ramCe),        
 		.clk(clk),        
-		.we(memWr),        
-		.addr(memAddr),        
-		.wtData(wtData),        
-		.rdData(rdData)  
+		.we(ramWe),        
+		.addr(ramAddr),        
+		.wtData(ramWtData),        
+		.rdData(ramRdData)  
 	);
-	always@(posedge clk)
-		if(memCe)
-			out = rdData[15:0];
-	always@(posedge clk)
-		if(memCe && memWr)
-			out = wtData[15:0];
+
+	IO io0(
+		.ce(ioCe),
+		.clk(clk),
+		.we(ioWe),
+		.addr(ioAddr),
+		.wtData(ioWtData),
+		.rdData(ioRdData)
+		/*IO interface*/
+		.sw(sw),
+		.led(led)
+	);
 endmodule
