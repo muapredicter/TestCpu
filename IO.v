@@ -10,7 +10,7 @@ module IO(
     output reg [15:0] led
 );
     /*access IO device*/
-    always(posedge clk)
+    always@(posedge clk)
         if(sw == 1)
             led = wtData[15:0];
         else

@@ -52,7 +52,7 @@ module SoC(
 		.ioWe(ioWe),
 		.ioAddr(ioAddr),
 		.ioWtData(ioWtData)
-	)
+	);
 
 	InstMem instrom0(
         .ce(romCe),
@@ -75,7 +75,7 @@ module SoC(
 		.we(ioWe),
 		.addr(ioAddr),
 		.wtData(ioWtData),
-		.rdData(ioRdData)
+		.rdData(ioRdData),
 		/*IO interface*/
 		.sw(sw),
 		.led(led)

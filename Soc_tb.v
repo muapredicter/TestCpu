@@ -1,6 +1,6 @@
 `include "define.v"
 
-module soc_tb;
+module Soc_tb;
 
 	reg clk;
 	reg rst;
