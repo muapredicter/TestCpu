@@ -4,7 +4,7 @@ module soc_tb;
 
 	reg clk;
 	reg rst;
-	wire[15:0] out;
+	reg[15:0] out;
 	initial 
 	begin
 		clk = 0;

@@ -17,11 +17,9 @@ module MIOC(
     output reg [31:0] ioAddr,
     output reg [31:0] ioWtData
 );
-always@(*)
 if(memCe==`RamEnable)
     if(memAddr & 32'hF000_0000==32'h7000_0000)
         begin
-            ioCe = 0;
             ioWe = memWr;
             ioAddr = memAddr;
             ramCe = `RamDisable;
