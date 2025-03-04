@@ -4,7 +4,8 @@ module Soc_tb;
 
 	reg clk;
 	reg rst;
-	wire[15:0] out;
+	wire[1:0] key;
+    wire[15:0] led;
 	initial 
 	begin
 		clk = 0;
@@ -19,7 +20,8 @@ module Soc_tb;
 	SoC soc0(
         .clk(clk), 
         .rst(rst),
-		.out(out)
+		.key(key),
+		.led(led)
     );
 
 endmodule

@@ -1,8 +1,8 @@
 module SoC(
     input wire clk,
     input wire rst,
-    input wire key,
-    output reg [15:0] led
+    input wire[1:0] key,
+    output wire [15:0] led
 );
 	wire [31:0] instAddr;
     wire [31:0] instruction;
@@ -16,7 +16,7 @@ module SoC(
 	wire ramCe,ramWe,ioCe,ioWe;
 	wire [31:0]ramWtData,ramAddr,ramRdData;
 	wire [31:0]ioWtData,ioAddr,ioRdData;
-
+	
 	wire[5:0] intr;
 	wire intimer;
 
