@@ -15,6 +15,12 @@
 `define RamEnable 1'b1
 `define RamDisable 1'b0
 
+//IO
+`define IOWrite 1'b1
+`define IOUnWrite 1'b0
+`define IOEnable 1'b1
+`define IODisable 1'b0
+
 //中断处理
 `define CP0_epc 32'b0
 `define IntrOccur 1'b1
@@ -78,6 +84,10 @@
 `define Inst_cp0  6'b010000	 // 二级译码
 `define Inst_mfc0 5'b00000	
 `define Inst_mtc0 5'b00100	 
+
+//下板
+`define Key 32'h0x70000010
+`define Led 32'h0x70000030
 
 //EX
 `define Nop 6'b000000

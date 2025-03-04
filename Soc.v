@@ -1,7 +1,7 @@
 module SoC(
     input wire clk,
     input wire rst,
-    input wire sw,
+    input wire key,
     output reg [15:0] led
 );
 	wire [31:0] instAddr;
@@ -19,6 +19,7 @@ module SoC(
 
 	wire[5:0] intr;
 	wire intimer;
+
 	assign intr={5'b0,intimer};
 
 	MIPS mips0(
@@ -77,7 +78,7 @@ module SoC(
 		.wtData(ioWtData),
 		.rdData(ioRdData),
 		/*IO interface*/
-		.sw(sw),
+		.key(key),
 		.led(led)
 	);
 endmodule

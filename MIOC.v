@@ -46,6 +46,7 @@ module MIOC(
                 ramWe = `RamUnWrite;
                 ramAddr = `Zero;
             end
+            
     always@(*)
         if(memCe == `RamEnable)
             if(ramCe == `RamEnable)
@@ -59,54 +60,6 @@ module MIOC(
                     rdData = ioRdData;
                     ramWtData = `Zero;
                     ioWtData = wtData;
-                end
-        else
-            begin
-                    rdData = `Zero;
-                    ramWtData = `Zero;
-                    ioWtData = `Zero;
-            end
-    always@(*)
-        if(memCe==`RamEnable)
-            if(memAddr & 32'hF000_0000==32'h7000_0000)
-                begin
-                    ioCe = 0;
-                    ioWe = memWr;
-                    ioAddr = memAddr;
-                    ramCe = `RamDisable;
-                    ramWe = `RamUnWrite;
-                    ramAddr = `Zero;
-                end
-            else
-                begin
-                    ioCe = `RamDisable;
-                    ioWe = `RamUnWrite;
-                    ioAddr = `Zero;
-                    ramCe = `RamEnable;
-                    ramWe = memWr;
-                    ramAddr = memAddr;
-                end
-        else
-            begin
-                ioCe = `RamDisable;
-                ioWe = `RamUnWrite;
-                ioAddr = `Zero;
-                ramCe = `RamDisable;
-                ramWe = `RamUnWrite;
-                ramAddr = `Zero;
-            end
-    always@(*)
-        if(memCe == `RamEnable)
-            if(ramCe == `RamEnable)
-                begin
-                    rdData = ramRdData;
-                    ramWtData = wtData;
-                    ioWtData = `Zero;
-                end
-            else
-                begin
-                    rdData = ioRdData;
-                    ramWtData = `Zero; 
                 end
         else
             begin

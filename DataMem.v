@@ -21,4 +21,5 @@ module DataMem(
     always@(posedge clk)
         if(ce == `RamEnable && we == `RamWrite)
             datamem[addr[11 : 2]] = wtData; // 写入数据
+        else ;
 endmodule
