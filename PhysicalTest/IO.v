@@ -32,6 +32,7 @@ module IO(
                         led = wtData[15:0];
                 endcase
                 end
-            else ;
+            else 
+                led = 4'h0000;
         
 endmodule
