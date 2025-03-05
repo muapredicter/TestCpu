@@ -1,9 +1,11 @@
 module SoC(
-    input wire clk,
+    input wire out_clk,
     input wire rst,
-    input wire[1:0] key,
+    input wire key,
     output wire [15:0] led
 );
+	wire clk;
+
 	wire [31:0] instAddr;
     wire [31:0] instruction;
     wire romCe;
@@ -21,6 +23,11 @@ module SoC(
 	wire intimer;
 
 	assign intr={5'b0,intimer};
+	clk_divider divider(
+		.out_clk(out_clk),
+		.reset_n(rst),
+		.clk(clk)
+	);
 
 	MIPS mips0(
         .clk(clk),
