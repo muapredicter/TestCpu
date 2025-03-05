@@ -23,6 +23,7 @@ module SoC(
 	wire intimer;
 
 	assign intr={5'b0,intimer};
+	
 	clk_divider divider(
 		.out_clk(out_clk),
 		.reset_n(rst),
