@@ -31,11 +31,6 @@ module MEM(
 
 	assign regAddr = regcAddr;    
 	assign regWr = regcWr;    
-//	assign regData = (op == `Lw) ? rdData : regcData;    
-
-	//因为regData是wire型的，所以为了不修改原来的代码，就不使用always
-	//而是修改regcData的值，来传到regData
-
 
 	//二选一，选出Sc指令的rt<-1或rt<0
 	wire [31:0]regDataLL= (rLLbit==`SetFlag) ? 32'b1 : 32'b0; 

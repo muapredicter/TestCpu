@@ -10,34 +10,11 @@ module Ctrl(
 	output reg[5:0] stall_o    //to 流水寄存器
 );
 
-
-
-
-/*
-	//左移寄存器
-	always@(*)
-		if(rst == `RstEnable)
-			stall_o=6'b0;
-		else
-			stall_o={stall_o[4:0],stall_id};
-*/
-
-/*
-	reg f=1;
-	//循环左移寄存器
-	always@(*)
-		if(rst == `RstEnable)
-			stall_o=6'b0;
-		else
-			{f,stall_o}={stall_o[4:0],stall_id,f};
-*/
-
 	always@(*)
 		if(rst == `RstEnable)
 			stall_o=6'b0;
 		else
 			stall_o={stall_o[5:2],stall_id,stall_id};
-
 
 	always@(*)
 		if(rst == `RstEnable)
