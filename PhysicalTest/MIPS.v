@@ -98,7 +98,7 @@ ID id0(
     .regaData(regaData_id),
     .regbData(regbData_id),
     .regaRead(regaRead),
-    .regbRead(regaRead),
+    .regbRead(regbRead),
     .regcWrite(regcWrite_id),
     .regaAddr(regaAddr),
     .regbAddr(regbAddr),
@@ -154,10 +154,10 @@ MEM mem0(
     .regAddr(regAddr_mem),
     .regWr(regWr_mem),
     .regData(regData_mem),
-    .memAddr(memAddr_mem),
-    .wtData(wtData_mem),
-    .memWr(memWr_mem),
-    .memCe(memCe_mem),
+    .memAddr(memAddr),
+    .wtData(wtData),
+    .memWr(memWr),
+    .memCe(memCe),
     .wbit(wbit_mem),
     .wLLbit(wLLbit_mem)
 );

@@ -9,6 +9,9 @@
 `define SetFlag 1'b1
 `define ClearFlag 1'b0
 
+//??
+`define COUNTER_MAX 25000000
+
 //MEM
 `define RamWrite 1'b1
 `define RamUnWrite 1'b0
@@ -87,7 +90,7 @@
 
 //下板
 `define Key 32'h0x70000010
-`define Led 32'h0x70000030
+`define Led 32'h0x70000040
 
 //EX
 `define Nop 6'b000000
