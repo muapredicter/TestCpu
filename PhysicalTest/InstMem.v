@@ -17,6 +17,27 @@ module InstMem(
 
     initial begin
 
+		//测试单周期下版
+		//从KEY取出 循环处理 //给LED送入
+
+		//初始化DataMEM数据
+		//lui  R0,7000 --R1 --70000000
+		instmem[0] = 32'h3C017000;
+		//lui  R0,7000 --R2 --70000000
+		instmem[1] = 32'h3C027000;
+		//r1=70000010
+		instmem[2]= 32'b001101_00001_00001_0000_0000_0001_0000;//ori r1,r1,0010 
+		//r2=70000040
+		instmem[3]= 32'b001101_00010_00010_0000_0000_0100_0000;//ori r2,r2,0040
+		
+		//循环
+		instmem[4]=32'b100011_00001_00011_0000_0000_0000_0000; //lw r3,0x0(r1)
+		instmem[5]=32'b101011_00010_00011_0000_0000_0000_0000; //sw r3,0x0(r2)
+
+		instmem[6]= 32'h08000004;  	//j 4		编码000010  pc=0010
+
+
+		/*
         // 初始化
         instmem[0] = 32'h34011100;//r1=00001100h
 		instmem[1] = 32'h34020020;//r2=00000020h
@@ -107,6 +128,7 @@ module InstMem(
 		instmem [55]=32'h340affff;//syscall except program
 		instmem [56]=32'h340bffff;//ori
 		instmem [57]=32'h42000018;//eret inatruction*/
+		
 
         
         /* intimer

@@ -19,7 +19,7 @@ module MIOC(
 );
     always@(*)
         if(memCe==`RamEnable)
-            if(memAddr & 32'hF000_0000==32'h7000_0000)
+            if(memAddr >= 32'h7000_0000 && memAddr<32'h8000_0000)
                 begin
                     ioCe = 0;
                     ioWe = memWr;
@@ -63,8 +63,8 @@ module MIOC(
                 end
         else
             begin
-                    rdData = `Zero;
-                    ramWtData = `Zero;
-                    ioWtData = `Zero;
+                rdData = `Zero;
+                ramWtData = `Zero;
+                ioWtData = `Zero;
             end
 endmodule
