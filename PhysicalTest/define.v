@@ -10,7 +10,7 @@
 `define ClearFlag 1'b0
 
 //??
-`define COUNTER_MAX 25000000
+`define COUNTER_MAX 2
 
 //MEM
 `define RamWrite 1'b1

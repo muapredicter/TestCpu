@@ -16,10 +16,10 @@ reg [31:0] count;
 always @(posedge out_clk) begin
          begin
         if (count == `COUNTER_MAX - 1) begin
-            count <= 32'd0;
-            clk <= ~clk;
+            count = 32'd0;
+            clk = ~clk;
         end else begin
-            count <= count + 1'b1;
+            count = count + 1'b1;
         end
     end
 end
