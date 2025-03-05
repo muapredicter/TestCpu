@@ -27,6 +27,11 @@
 `define CP0_epc 5'd14
 `define CP0_cause 5'd13
 
+//流水线CPU
+`define ZeroWord 32'b0000
+`define Stop 1'b1
+`define NoStop 1'b0
+
 //I型
 `define Inst_addi 6'b001000
 `define Inst_ori 6'b001101
@@ -94,7 +99,7 @@
 `define Ori 6'b001011
 `define Andi 6'b001100
 `define Xori 6'b001101
-`define lui 6'b001110
+`define Lui 6'b001110
 `define Beq 6'b001111
 `define Bne 6'b010000
 `define J   6'b010001

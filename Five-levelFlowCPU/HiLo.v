@@ -10,7 +10,7 @@ module HiLo (
 	output reg [31:0] rHiData,
 	output reg [31:0] rLoData
 );
-	reg [31:0]hi,lo;
+	reg [31:0]hi,lo;//内部存储
 	always@ (*)
 		if(rst==`RstEnable)
 			begin
@@ -32,4 +32,3 @@ module HiLo (
 			lo=wLoData;
 		else ;
 endmodule
-
