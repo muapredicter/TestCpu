@@ -13,9 +13,13 @@ module Ctrl(
 	always@(*)
 		if(rst == `RstEnable)
 			stall_o=6'b0;
+		// else
+		// stall_o={stall_o[5:3],stall_id,stall_id,stall_id};
+		else if(stall_id == `Stop)
+			stall_o = 6'b000111;
 		else
-			stall_o={stall_o[5:2],stall_id,stall_id};
-
+			stall_o = 6'b0;
+			
 	always@(*)
 		if(rst == `RstEnable)
 			begin
