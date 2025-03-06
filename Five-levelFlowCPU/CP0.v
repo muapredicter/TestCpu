@@ -1,5 +1,5 @@
 `include "define.v"
-//协处理器模块
+//CP0协处理器模块
 module CP0(
 	input wire clk,		//时钟信号
 	input wire rst,		//复位信号

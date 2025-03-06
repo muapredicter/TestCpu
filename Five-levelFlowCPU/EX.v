@@ -1,5 +1,5 @@
 `include "define.v"
-//3、执行指令模块
+//执行指令模块
 
 module EX (
         input wire rst,

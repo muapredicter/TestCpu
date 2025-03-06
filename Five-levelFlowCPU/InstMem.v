@@ -1,5 +1,5 @@
 `include "define.v";
-//6、指令存储器
+//指令存储器
 module InstMem(
     input wire ce,
     input wire [31:0] addr,
@@ -32,7 +32,7 @@ module InstMem(
 		//load 相关
 		//mem[0]=(r1)
 		instmem[7]=32'b101011_00000_00001_0000_0000_0000_0000; //sw r1,0x0(r0)
-		//(r8)=mem[0]
+		//(r8)=mem[0] lw和sw之间有数据冲突 停留一个周期
 		instmem[8]=32'b100011_00000_01000_0000_0000_0000_0000; //lw r8,0x0(r0)
 		instmem[9]=32'b001101_01000_01001_0000_0000_0000_0000; // ori r9 r8,0000	
 		instmem[10]=32'b001100_01001_01010_1111_1111_1111_1111; // andi r10 r9,ffff	
